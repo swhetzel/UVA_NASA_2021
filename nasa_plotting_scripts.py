@@ -30,24 +30,27 @@ def get_tracked_parasol(
 
     Parameters
     ----------
-    file : TYPE
-        DESCRIPTION.
-    step : TYPE, optional
-        DESCRIPTION. The default is 20.
-    north_tracks : TYPE, optional
-        DESCRIPTION. The default is 2.
-    south_tracks : TYPE, optional
-        DESCRIPTION. The default is 2.
-    lat : TYPE, optional
-        DESCRIPTION. The default is 34.540852.
-    lon : TYPE, optional
-        DESCRIPTION. The default is -68.379303.
+    file : str
+        Name of hdf file to be explored.
+    step : int, optional
+        The number of indices that will be offset for each track. The default is 20.
+    north_tracks : int, optional
+        Number of tracks that should be explored above the point of interest. 
+        The default is 2.
+    south_tracks : int, optional
+        Number of tracks that should be explored below the point of interest. 
+        The default is 2.
+    lat : float, optional
+        Latitude of the point of interest to be explored. The default is 34.540852.
+    lon : float, optional
+        Longitude of the point of interest to be explored. The default is -68.379303.
     buffer : TYPE, optional
-        DESCRIPTION. The default is 0.001.
+        The +/- range that will be used to filter for lat and lon. The default is 0.001.
 
     Returns
     -------
-    None.
+    Formatted data frame with normalized radiances and degrees of linear polarization
+    for all specified tracks surrounding the indicated point of interest within the file. 
 
     """
 
@@ -89,7 +92,6 @@ def get_tracked_parasol(
         lat = pd.DataFrame(hdf.select("Latitude").get()).loc[ind][0]
         lon = pd.DataFrame(hdf.select("Longitude").get()).loc[ind][0]
         time = pd.DataFrame(hdf.select("Time").get()).loc[ind][0]
-        #         print(ind, time)
 
         # Loop through each radiance
         rad_df = pd.DataFrame()
@@ -98,19 +100,15 @@ def get_tracked_parasol(
             transform = [
                 round(i * (10 ** (-4)), 5) if i > -1000 else i for i in list(temp)
             ]
-            #             print(list(temp))
-            #             print(pd.DataFrame(transform).transpose())
 
             df_temp = pd.DataFrame(transform).transpose()
             df_temp["Wavelength"] = (rad).replace("Normalized_Radiance_", "")
             rad_df = pd.concat([rad_df, df_temp])
-        # Rest index and rename the columns
+
         rad_df = rad_df.reset_index(drop=True)
         rad_cols = [i for i in range(16)]
         rad_cols.append("wavelength")
         rad_df.columns = rad_cols
-
-        #         print(rad_df)
 
         # Get q data and add to the dataframe
         q_df = pd.DataFrame()
@@ -120,17 +118,14 @@ def get_tracked_parasol(
             transform = [
                 round(i * (10 ** (-4)), 5) if i > -1000 else i for i in list(temp)
             ]
-            #             print(transform)
 
             df_temp = pd.DataFrame(transform).transpose()
 
-            #             df_temp = (pd.DataFrame(pd.DataFrame(hdf.select(q).get()).loc[ind]).transpose())
             df_temp["wavelength"] = q.replace("Q_Stokes_", "")
             q_df = pd.concat([q_df, df_temp])
         qcols = [i for i in range(16)]
         qcols.append("wavelength")
         q_df.columns = qcols
-        # print(q_df)
 
         # Get u data and add to the dataframe
         u_df = pd.DataFrame()
@@ -140,17 +135,13 @@ def get_tracked_parasol(
             transform = [
                 round(i * (10 ** (-4)), 5) if i > -1000 else i for i in list(temp)
             ]
-            #             print(transform)
 
             df_temp = pd.DataFrame(transform).transpose()
-            #             df_temp = (pd.DataFrame(pd.DataFrame(hdf.select(u).get()).loc[ind]).transpose())
             df_temp["wavelength"] = u.replace("U_Stokes_", "")
             u_df = pd.concat([u_df, df_temp])
         ucols = [i for i in range(16)]
         ucols.append("wavelength")
         u_df.columns = ucols
-
-        #         print(u_df)
 
         # Melt the matrices
         rad_melt = rad_df.melt(
@@ -159,7 +150,7 @@ def get_tracked_parasol(
             var_name="angle",
             value_name="norm_rad",
         )
-        #         print(rad_melt)
+
         q_melt = q_df.melt(
             id_vars="wavelength",
             value_vars=[i for i in range(16)],
@@ -218,10 +209,11 @@ def plot_tracked_parasol(master_df, np=True):
 
     Parameters
     ----------
-    master_df : TYPE
-        DESCRIPTION.
-    np : TYPE, optional
-        DESCRIPTION. The default is True.
+    master_df : Pandas DataFrame
+        Formatted DataFrame generated from get_tracked_parasol.
+    np : bool, optional
+        True will result in a plot for non-polarized wavelengths. False will plot
+        degree of linear polarization for polarized wavelengths. The default is True.
 
     Returns
     -------
