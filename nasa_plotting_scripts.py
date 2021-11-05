@@ -14,7 +14,8 @@ import seaborn as sns
 import numpy as np
 
 def get_tracked_parasol(
-        file, step = 20, 
+        file, 
+        step = 20, 
         north_tracks=2, 
         south_tracks=2, 
         lat=34.540852, 
