@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import os
 import seaborn as sns
 import numpy as np
+import plotly.graph_objects as go
 
 
 def get_tracked_parasol(
@@ -35,10 +36,10 @@ def get_tracked_parasol(
     step : int, optional
         The number of indices that will be offset for each track. The default is 20.
     north_tracks : int, optional
-        Number of tracks that should be explored above the point of interest. 
+        Number of tracks that should be explored above the point of interest.
         The default is 2.
     south_tracks : int, optional
-        Number of tracks that should be explored below the point of interest. 
+        Number of tracks that should be explored below the point of interest.
         The default is 2.
     lat : float, optional
         Latitude of the point of interest to be explored. The default is 34.540852.
@@ -50,7 +51,7 @@ def get_tracked_parasol(
     Returns
     -------
     Formatted data frame with normalized radiances and degrees of linear polarization
-    for all specified tracks surrounding the indicated point of interest within the file. 
+    for all specified tracks surrounding the indicated point of interest within the file.
 
     """
 
@@ -104,7 +105,6 @@ def get_tracked_parasol(
             df_temp = pd.DataFrame(transform).transpose()
             df_temp["Wavelength"] = (rad).replace("Normalized_Radiance_", "")
             rad_df = pd.concat([rad_df, df_temp])
-
         rad_df = rad_df.reset_index(drop=True)
         rad_cols = [i for i in range(16)]
         rad_cols.append("wavelength")
@@ -243,3 +243,92 @@ def plot_tracked_parasol(master_df, np=True):
         g.fig.subplots_adjust(top=0.9)
         g.fig.suptitle(("Degree of Linear Polarization by Viewing Angle").upper())
         g.add_legend()
+
+
+def get_activate_aods(f):
+    """
+    Generates a dataframe from a GRASP L2 files with aerosol products (AOD non-coarse
+    and non-fine) for coordinates that lie within the ACTIVATE region.
+
+    Parameters
+    ----------
+    f : h5py object
+        h5py object with the GRASP file you wish to analyze.
+
+    Returns
+    -------
+    activate : Pandas DataFrame
+        DataFrame with aerosol products for the ACTIVATE region.
+
+    """
+
+    aod_fields = [
+        i
+        for i in list(f["L2-GRASP"].keys())
+        if "AOD" in i
+        if "AAOD" not in i
+        if "Coarse" not in i
+        if "Fine" not in i
+    ]
+
+    lats = np.array(f["L2-GRASP"]["Latitude"])
+    lons = np.array(f["L2-GRASP"]["Longitude"])
+
+    indices = np.where((lats < 39) & (lats > 32) & (lons > -75) & (lons < -70))
+
+    aod_df = pd.DataFrame()
+    for aod in aod_fields:
+        arr = np.array(f["L2-GRASP"][aod])
+        arr_temp = arr[indices[0], indices[1]]
+        aod_df = pd.concat([aod_df, pd.DataFrame({aod: arr_temp})], axis=1)
+    activate = pd.DataFrame(
+        {
+            "lat": lats[indices[0], indices[1]],
+            "lon": lons[indices[0], indices[1]],
+        }
+    )
+    activate = pd.concat([activate, aod_df], axis=1)
+
+    activate["coord"] = [
+        str(round(activate.lat.loc[i], 3)) + ", " + str(round(activate.lon.loc[i], 3))
+        for i in range(len(activate))
+    ]
+
+    return activate
+
+
+def plot_GRASP_aod(activate, aod_field):
+    """
+    Creates a plotly Scattergeo plot showing aerosol optical depth for a single
+    AOD field. Color is set to AOD.
+
+    Parameters
+    ----------
+    activate : Pandas DataFrame
+        Data Frame generated from get_activate_aods.
+    aod_field : str
+        Name of the field you wish to plot.
+
+    Returns
+    -------
+    None.
+
+    """
+    activate = activate[["lat", "lon", "coord", aod_field]].query(
+        f"{aod_field} > -1000"
+    )
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scattergeo(
+            lon=activate["lon"],
+            lat=activate["lat"],
+            hoverinfo="text",
+            text=activate["coord"] + " aod: " + activate[aod_field].astype(str),
+            mode="markers",
+            marker=dict(size=2, color=activate[aod_field]),
+        )
+    )
+
+    fig.update_layout(margin=dict(l=1, r=1, t=1, b=1))
+    fig.show()
