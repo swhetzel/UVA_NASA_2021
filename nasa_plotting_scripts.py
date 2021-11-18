@@ -2,6 +2,12 @@
 """
 Created on Fri Nov  5 11:13:34 2021
 
+This module houses functions designed to ingest, process, and visualize the 
+contents of various hdf files within the icare data archive. The functions here
+mostly focus on plotting polarimetry data from the PARASOL mission, lidar 
+data from the CALIOP mission and air quality products produced by the GRASP 
+algorithm. 
+
 @author: whetz
 """
 
@@ -9,7 +15,6 @@ import pandas as pd
 import h5py
 from pyhdf.SD import SD, SDC
 import matplotlib.pyplot as plt
-import os
 import seaborn as sns
 import numpy as np
 import plotly.graph_objects as go
@@ -32,7 +37,7 @@ def get_tracked_parasol(
     Parameters
     ----------
     file : str
-        Name of hdf file to be explored.
+        Name of hdf file path to be explored.
     step : int, optional
         The number of indices that will be offset for each track. The default is 20.
     north_tracks : int, optional
@@ -245,7 +250,7 @@ def plot_tracked_parasol(master_df, np=True):
         g.add_legend()
 
 
-def get_activate_aods(f):
+def get_activate_GRASP_aods(f):
     """
     Generates a dataframe from a GRASP L2 files with aerosol products (AOD non-coarse
     and non-fine) for coordinates that lie within the ACTIVATE region.
@@ -326,7 +331,7 @@ def plot_GRASP_aod(activate, aod_field):
             hoverinfo="text",
             text=activate["coord"] + " aod: " + activate[aod_field].astype(str),
             mode="markers",
-            marker=dict(size=2, color=activate[aod_field]),
+            marker=dict(size=2, color=activate[aod_field])
         )
     )
 
