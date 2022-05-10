@@ -21,7 +21,7 @@ We have developed a module with all of our plotting functions saved here as "nas
 
 
 ## Reformatting PARASOL to L1C
-One of the next things we expect this project to focus on will be the use of the acquisition algorithm with real world data. To do this we need to process our PARASOL files to a format that NASA's internal computing resources is familiar with. To do this we deconstruct the current PARASOL files, pare them down to only relevant datapoints, transform some fields, reshape the data tensors, and write to a .nc file (another hierarchical data format). You can see the process by which we do this in L1C_Formatting_Center.ipynb. The code in this notebook has also been made into a module labeled "L1C_Centered.py".
+One of the next things we expect this project to focus on will be the use of the acquisition algorithm with real world data. To do this we need to process our PARASOL files to a format that NASA's internal computing resources is familiar with. To do this we deconstruct the current PARASOL files, pare them down to only relevant datapoints, transform some fields, reshape the data tensors, and write to a .nc file (another hierarchical data format). You can see the process by which we do this in L1C_Formatting_Center.ipynb. The code in this notebook has also been made into a module labeled "L1C_Centered.py". You can see the example formatted .nc file in "example_centered.nc". 
 
 
 ### Questions
