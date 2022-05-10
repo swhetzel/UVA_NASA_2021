@@ -31,3 +31,5 @@ You can forward us any questions you have at the following emails:
 * Jack Peele - jcp2jf@virginia.edu 
 * Sebastian Ranasinghe - sar2jf@virginia.edu  
 
+### Notes
+Deprecated_Detritus contains old files I either did not have the time to go through or the heart to delete. Feel free to ignore them. 
