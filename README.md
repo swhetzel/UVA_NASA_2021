@@ -26,7 +26,7 @@ One of the next things we expect this project to focus on will be the use of the
 
 ### Questions
 You can forward us any questions you have at the following emails:
-* Stephen Whetzel - sjw5ke@virginia.edu
+* Stephen Whetzel - sjw5ke@virginia.edu (or swhetzel@cubs.com)
 * Abhi Dommalapati - ad4bu@virginia.edu 
 * Jack Peele - jcp2jf@virginia.edu 
 * Sebastian Ranasinghe - sar2jf@virginia.edu  
