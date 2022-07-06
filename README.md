@@ -24,6 +24,34 @@ conda install pip
 pip install -r requirements.txt
 ```
 
+## Adding new packages to environment
+```
+conda install package_name
+```
+OR
+```
+conda install -c conda-forge package_name
+```
+
+Then add it to the requirements.txt
+```
+conda list -e > requirements.txt
+```
+
+## Mac h5py install - if you're encountering errors
+```
+pip install PEP517
+pip install --upgrade wheel
+pip install --upgrade setuptools
+brew install hdf5
+```
+
+## Set up your .env File
+* Make a copy of the .env.dist file and name it .env
+* Put your specific credentials/paths/whatever in your personal .env file
+* The .env file should not be automatically uploaded to github (prevented by .gitignore)
+* If you want to add new variables to .env, please add an empty variable in .env.dist
+
 ## Adding a kernel to Jupyter Notebook
 Make sure that ipykernel is installed
 ```
