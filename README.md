@@ -2,6 +2,39 @@
 
 Repository for the UVA Master's in Data Science capstone project in collaboration with NASA. This repository includes scripts and files that do not need to be run on NASA's internal resources to properly compile as well as orienting documents for the project, its course and status. Mostly what is contained here can be designated into four main goals: project orientation, downloading data from iCARE, plotting PARASOL and GRASP data & reformatting PARASOL data into NASA's L1C format.
 
+## Setting up your environment
+**Step 1**: Open Anaconda Prompt
+
+**Step 2**: create a new environment - we're using python 3.9.5 specifically
+```
+conda create -n nasa_capstone_2022 -c anaconda python=3.9.5
+```
+**Step 3**: activate your new environment
+```
+conda activate nasa_capstone_2022
+```
+**Step 4**: install pip (doesn't come preinstalled in your new env)
+```
+conda install pip
+``` 
+**Step 5**: navigate to requirements.txt (should be in your base folder)
+
+**Step 6**: install requirements.txt
+```
+pip install -r requirements.txt
+```
+
+## Adding a kernel to Jupyter Notebook
+Make sure that ipykernel is installed
+```
+conda install ipykernal
+```
+
+Then add your environment as a kernel
+```
+python -m ipykernel install  --name=yourEnvName
+```
+
 ## Project Orientation
 Here we include a folder labeled "Project_Docs" which contains the paper we wrote to complete the capstone project this semester, our final presentation, and a FAQ page with information we wish we knew when we started out. This project took us a lot of time to get up to speed on the background of the problem as well as how figure out how to get started with working with the data and how to use NASA's internal computing resources. Hopefully ,the information in the FAQ gives your group a leg up in this process. 
 
