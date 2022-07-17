@@ -27,7 +27,7 @@ def my_script():
         # Convert into L1C format
         output_centered_l1c_file(
             directory=TMP_PATH + icare_file_folder,
-            file_path='POLDER3_L1B-BG1-080146M_2008-06-01T00-08-19_V1-00.h5',
+            file_path=file_path,
             write_path=write_path,
             write_name=write_name
         )
