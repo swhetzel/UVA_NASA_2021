@@ -7,9 +7,8 @@ import shutil
 import time
 from datetime import datetime
 from ftplib import FTP, error_perm, error_temp
-# import os
-# import dotenv
-# dotenv.load_dotenv()
+
+from load_dotenv import ICARE_USER, ICARE_PASSWORD, ICARE_FTP_SITE
 
 import h5py
 # from pyhdf.SD import SD, SDC
@@ -43,6 +42,7 @@ class ICARESession:
         self.temp_files = []
         for dirpath, _, filenames in os.walk(self.temp_dir):
             self.temp_files += [os.path.join(dirpath, f) for f in filenames]
+        self.ftp = None
         self.login()
         if not os.path.exists(self.temp_dir):
             os.makedirs(self.temp_dir, exist_ok=True)
@@ -77,7 +77,7 @@ class ICARESession:
 
     def login(self) -> None:
         """Log in to the ICARE FTP server, prompting user for credentials."""
-        self.ftp = FTP("ftp.icare.univ-lille1.fr")
+        self.ftp = FTP(ICARE_FTP_SITE)
         logged_in = False
         attempts = 0
         while not logged_in:
@@ -85,12 +85,12 @@ class ICARESession:
             if attempts > 10:
                 raise Exception("Too many failed login attempts!!")
             try:
-                if os.path.exists("icare_credentials.txt"):
-                    username, password = open("icare_credentials.txt").read().split("\n")
-                else:
-                    username = input("ICARE Username:")
-                    password = getpass.getpass("ICARE Password:")
-                self.ftp.login(username, password)
+                # if os.path.exists("icare_credentials.txt"):
+                #     username, password = open("icare_credentials.txt").read().split("\n")
+                # else:
+                #     username = input("ICARE Username:")
+                #     password = getpass.getpass("ICARE Password:")
+                self.ftp.login(ICARE_USER, ICARE_PASSWORD)
                 logged_in = True
                 self.ftp.cwd("SPACEBORNE")
             except error_perm as e:
@@ -142,13 +142,19 @@ class ICARESession:
 
     def get_file(self, filepath: str) -> str:
         # if the file doesn't exist, download it
+        # Build output path based on tmp_dir passed in at object creation and filepath (dated folder)
         local_path = os.path.join(self.temp_dir, filepath)
+
         if not os.path.exists(local_path):
             self._dump_temp_files()
             self.temp_files.append(local_path)
+
             # recursively make directories to this file
-            os.makedirs(os.path.join(self.temp_dir, os.path.split(filepath)[0]), exist_ok=True)
+            make_dir_path = os.path.join(self.temp_dir, os.path.split(filepath)[0])
+            os.makedirs(make_dir_path, exist_ok=True)
+
             temp_file = open(local_path, "wb")
+
             err_code = None
             attempts = 0
             while err_code in [None, "421", "430", "434"]:
