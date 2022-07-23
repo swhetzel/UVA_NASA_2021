@@ -4,7 +4,6 @@ Created on Tue May 10 15:46:12 2022
 
 @author: whetz
 """
-
 import h5py
 import os
 import numpy as np
@@ -45,8 +44,6 @@ def output_centered_l1c_file(directory, file_path, write_path, write_name):
     i490_fill = i490.attrs['_FillValue']
     i490_arr = np.array(i490)
     i490_arr.shape
-
-
     ### Cut down extra lat/lons
     # We only want to use columns and rows where actual data exists
     rows = []
