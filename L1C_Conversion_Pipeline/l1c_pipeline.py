@@ -1,6 +1,7 @@
 from icare import ICARESession
 from load_dotenv import DATA_PATH, TMP_PATH
 from L1C_Formatting_Centered_adjusted import output_centered_l1c_file
+from L1C_Conversion_Pipeline.conversion_stub import ConvertHDFFile
 
 
 def my_script():
@@ -31,6 +32,9 @@ def my_script():
             write_path=write_path,
             write_name=write_name
         )
+
+        # cls = ConvertHDFFile(3, TMP_PATH + icare_file_folder)
+        # cls.convert_file()
 
         # Post to Box folder
 
