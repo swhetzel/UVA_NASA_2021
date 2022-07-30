@@ -1,4 +1,4 @@
-from icare import ICARESession
+from L1C_Conversion_Pipeline.icare import ICARESession
 from load_dotenv import DATA_PATH, TMP_PATH
 from L1C_Formatting_Centered_adjusted import output_centered_l1c_file
 

@@ -110,6 +110,7 @@ def get_tracked_parasol(
             df_temp = pd.DataFrame(transform).transpose()
             df_temp["Wavelength"] = (rad).replace("Normalized_Radiance_", "")
             rad_df = pd.concat([rad_df, df_temp])
+
         rad_df = rad_df.reset_index(drop=True)
         rad_cols = [i for i in range(16)]
         rad_cols.append("wavelength")
@@ -286,6 +287,7 @@ def get_activate_GRASP_aods(f):
         arr = np.array(f["L2-GRASP"][aod])
         arr_temp = arr[indices[0], indices[1]]
         aod_df = pd.concat([aod_df, pd.DataFrame({aod: arr_temp})], axis=1)
+
     activate = pd.DataFrame(
         {
             "lat": lats[indices[0], indices[1]],
